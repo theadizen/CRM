@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>TheAdiZen | Lead Command Center</title>
+    
+    <link rel="icon" type="image/png" href="logo.webp">
+    <link rel="apple-touch-icon" href="logo.webp">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Brand Identity */
+            --primary: #1B4947; --primary-dark: #123A38; --primary-soft: #EAF3F1; --accent: #6FA6A0;
+            --bg: #F0EEE5; --surface: #FFFFFF; --text: #122522; --text-secondary: #465A57;
+            --muted: #667774; --border: #DDE7E4;
+            /* Semantic */
+            --success: #1F8A70; --success-soft: #E4F5ED; --warning: #C58A28; --warning-soft: #FCF1E1;
+            --danger: #C94B4B; --danger-soft: #FBEDED; --info: #4361EE; --info-soft: #E8F0FE;
+            /* Bento Tints */
+            --bento-teal: #E8F2F1; --bento-blue: #E8F0FE; --bento-amber: #FFF8E1; 
+            --bento-red: #FFEBEE; --bento-green: #E8F5E9; --bento-purple: #F3E5F5;
+            /* Metrics */
+            --radius-sm: 12px; --radius: 18px; --radius-lg: 28px;
+            --shadow-sm: 0 4px 12px -2px rgba(27,73,71,0.06); --shadow: 0 12px 32px -4px rgba(27,73,71,0.1);
+            --shadow-float: 0 20px 40px -8px rgba(27,73,71,0.15);
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            /* Safe Areas for Mobile */
+            --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; overflow-x: hidden; min-height: 100vh; }
+        
+        .app-watermark { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: clamp(200px, 35vw, 450px); opacity: 0.12; pointer-events: none; z-index: 0; object-fit: contain; }
+        
+        h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.02em; }
+        .text-sm { font-size: 0.875rem; } .text-xs { font-size: 0.75rem; }
+        .text-muted { color: var(--muted); } .font-bold { font-weight: 600; } .font-heavy { font-weight: 800; }
+        .uppercase { text-transform: uppercase; letter-spacing: 0.05em; }
+
+        .btn { padding: 12px 20px; border-radius: var(--radius-sm); font-weight: 600; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.15s, opacity 0.15s, box-shadow 0.15s; border: 1px solid transparent; text-decoration: none; user-select: none; }
+        .btn:active:not(:disabled) { transform: scale(0.96); }
+        .btn:disabled { opacity: 0.7; cursor: not-allowed; }
+        .btn-primary { background: var(--primary); color: var(--surface); box-shadow: 0 4px 12px rgba(27,73,71,0.15); }
+        .btn-outline { background: var(--surface); color: var(--text); border-color: var(--border); }
+        .btn-danger { background: var(--danger); color: var(--surface); }
+        .btn-success { background: var(--success); color: var(--surface); }
+
+        .badge { display: inline-flex; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; white-space: nowrap; }
+        .badge-primary { background: var(--primary-soft); color: var(--primary); }
+        .badge-warning { background: var(--warning-soft); color: var(--warning); }
+        .badge-danger { background: var(--danger-soft); color: var(--danger); }
+        .badge-gray { background: #EAEAEA; color: var(--text-secondary); border: 1px solid var(--border); }
+
+        .bento-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow-sm); position: relative; z-index: 1; transition: box-shadow 0.2s; }
+        .bento-card:hover { box-shadow: var(--shadow); }
+        .bento-teal { background: var(--bento-teal); border-color: #B2DFDB; }
+        .bento-amber { background: var(--bento-amber); border-color: #FFE082; }
+        .bento-red { background: var(--bento-red); border-color: #FFCDD2; }
+        .bento-blue { background: var(--bento-blue); border-color: #D2E3FC; }
+        
+        .grid { display: grid; gap: 20px; }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; color: var(--text-secondary); }
+        .form-control { width: 100%; padding: 14px 16px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 1rem; background: var(--bg); color: var(--text); outline: none; transition: border-color 0.2s, background 0.2s; appearance: none; -webkit-appearance: none; }
+        .form-control:focus { border-color: var(--primary); background: var(--surface); }
+        select.form-control { background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23122522%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 16px top 50%; background-size: 10px auto; padding-right: 40px; }
+
+        /* Full Screen Modals / State UI */
+        #boot-ui { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity 0.3s; }
+        #auth-view, #app { display: none; min-height: 100vh; position: relative; z-index: 10; }
+        #auth-view { align-items: center; justify-content: center; padding: 20px; }
+        
+        /* Layout */
+        #app { display: flex; overflow: hidden; height: 100vh; }
+        .sidebar { width: 280px; background: rgba(255,255,255,0.98); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 50; box-shadow: var(--shadow); }
+        .sidebar-header { padding: 32px 24px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+        .sidebar-nav { flex: 1; padding: 24px 16px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
+        .nav-item { padding: 14px 16px; border-radius: var(--radius-sm); color: var(--text-secondary); text-decoration: none; font-weight: 600; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 14px; }
+        .nav-item:active { background: var(--bg); }
+        .nav-item.active { background: var(--primary); color: var(--surface); box-shadow: 0 4px 12px rgba(27,73,71,0.2); }
+        .sidebar-footer { padding: 24px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--surface); }
+
+        .main-content { flex: 1; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+        .topbar { height: 80px; background: rgba(240,238,229,0.95); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; padding: 0 40px; z-index: 10; padding-top: var(--safe-top); }
+        .content-area { flex: 1; overflow-y: auto; padding: 40px; position: relative; padding-bottom: calc(40px + var(--safe-bottom)); }
+        .view-section { display: none; animation: fadeIn 0.2s; }
+        .view-section.active { display: block; }
+        body:not(.is-admin) .admin-only { display: none !important; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Auth */
+        .auth-card { background: var(--surface); width: 100%; max-width: 440px; padding: 48px; border-radius: var(--radius-lg); box-shadow: var(--shadow-float); position: relative; z-index: 1; }
+        .auth-tabs { display: flex; border-bottom: 2px solid var(--bg); margin-bottom: 32px; gap: 8px; }
+        .auth-tab { flex: 1; padding: 14px; text-align: center; cursor: pointer; color: var(--muted); font-weight: 700; font-size: 0.95rem; border-bottom: 3px solid transparent; }
+        .auth-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .form-error { background: var(--danger-soft); color: var(--danger); padding: 14px; border-radius: var(--radius-sm); margin-bottom: 24px; font-size: 0.875rem; font-weight: 600; display: none; }
+
+        /* Modals & Overlays */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(18,37,34,0.6); z-index: 100; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; padding: 20px; }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal { background: var(--surface); border-radius: var(--radius-lg); width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-float); transform: translateY(20px); transition: transform 0.2s; display: flex; flex-direction: column; }
+        .modal-overlay.active .modal { transform: translateY(0); }
+        .modal-header { padding: 24px 32px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--surface); position: sticky; top:0; z-index: 10; }
+        .modal-body { padding: 32px; }
+        .close-btn { background: var(--bg); border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-secondary); }
+
+        /* Lead 360 Workspace (Full Screen Mobile) */
+        .l360-wrapper { background: var(--bg); width: 100%; max-width: 1200px; height: 90vh; border-radius: var(--radius-lg); display: flex; flex-direction: column; overflow: hidden; }
+        .l360-container { display: flex; flex: 1; overflow-y: auto; }
+        .l360-left { flex: 1.2; padding: 32px; border-right: 1px solid var(--border); background: var(--surface); }
+        .l360-right { flex: 1.5; padding: 32px; display: flex; flex-direction: column; gap: 24px; }
+
+        /* Mobile Queue Picker Bottom Sheet */
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 40; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+        .queue-picker-sheet { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--surface); border-radius: var(--radius-lg) var(--radius-lg) 0 0; box-shadow: var(--shadow-float); z-index: 105; transform: translateY(100%); transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1); max-height: 85vh; display: flex; flex-direction: column; padding-bottom: var(--safe-bottom); }
+        .queue-picker-sheet.active { transform: translateY(0); }
+        .queue-group-title { font-size: 0.75rem; text-transform: uppercase; font-weight: 800; color: var(--muted); padding: 20px 24px 8px; }
+        .queue-btn { display: flex; justify-content: space-between; width: 100%; padding: 14px 24px; background: transparent; border: none; font-size: 1rem; font-weight: 600; color: var(--text); cursor: pointer; text-align: left; align-items: center; border-bottom: 1px solid var(--bg); }
+        .queue-btn:active { background: var(--bg); }
+
+        /* Button Loading State */
+        .btn.loading { color: transparent !important; pointer-events: none; position: relative; }
+        .btn.loading::after { content: ""; position: absolute; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-top-color: currentColor; border-radius: 50%; animation: spin 0.6s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .menu-toggle { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; color: var(--text); box-shadow: var(--shadow-sm); }
+        .hide-mobile { display: block; }
+
+        @media (max-width: 1024px) {
+            .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); }
+            .l360-container { flex-direction: column; }
+            .l360-left { border-right: none; border-bottom: 1px solid var(--border); }
+        }
+        @media (max-width: 768px) {
+            .sidebar { position: fixed; left: 0; top: 0; height: 100%; transform: translateX(-100%); width: 85%; max-width: 320px; transition: transform 0.25s; }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; opacity: 1; pointer-events: all; }
+            .menu-toggle { display: block; cursor: pointer; }
+            
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+            .topbar { padding: 0 20px; height: 72px; }
+            .content-area { padding: 20px; }
+            .bento-card { padding: 20px; }
+            
+            .auth-card { padding: 32px 24px; border-radius: 0; border: none; box-shadow: none; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
+            #auth-view { padding: 0; background: var(--surface); }
+            
+            .hide-mobile { display: none !important; }
+            #desktop-queue-selector { display: none; }
+            #mobile-queue-trigger { display: flex !important; }
+
+            /* Mobile Modal Overrides */
+            .modal { max-width: 100%; width: 100%; height: 100vh; max-height: 100vh; border-radius: 0; transform: translateY(100%); }
+            .modal-overlay { padding: 0; }
+            .modal-header { padding: max(16px, var(--safe-top)) 20px 16px; }
+            .modal-body { padding: 20px; padding-bottom: max(20px, var(--safe-bottom)); }
+            
+            .l360-wrapper { max-width: 100%; height: 100vh; border-radius: 0; }
+            .l360-left, .l360-right { padding: 20px; }
+            
+            .table-responsive thead { display: none; }
+            .table-responsive tr { display: block; background: var(--surface); margin-bottom: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border); padding: 16px; box-shadow: var(--shadow-sm); }
+            .table-responsive td { display: block; padding: 8px 0; border: none; text-align: left !important; }
+            .table-responsive td::before { content: attr(data-label); font-weight: 800; font-size: 0.75rem; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 4px; }
+        }
+    </style>
+</head>
+<body>
+    <img src="logo.webp" class="app-watermark" alt="TheAdiZen">
+
+    <div id="boot-ui"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="3" style="animation: spin 0.8s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg></div>
+
+    <div id="auth-view">
+        <div class="auth-card">
+            <h2 style="margin-bottom: 8px; color:var(--primary); font-size: 1.8rem;">Command Center</h2>
+            <p class="text-sm text-muted" style="margin-bottom: 40px;">Secure Operational Workspace</p>
+
+            <div id="auth-forms-container">
+                <div class="auth-tabs">
+                    <div class="auth-tab active" data-action="switch-auth" data-type="agent">Agent</div>
+                    <div class="auth-tab" data-action="switch-auth" data-type="admin">Admin</div>
+                </div>
+
+                <div id="auth-error-msg" class="form-error"></div>
+
+                <form id="form-agent-login">
+                    <div class="form-group"><label class="form-label">Login ID</label><input type="text" id="agent-login-id" class="form-control" required placeholder="e.g. TZSAYAN27"></div>
+                    <div class="form-group"><label class="form-label">Password</label><input type="password" id="agent-password" class="form-control" required placeholder="••••••••"></div>
+                    <button type="submit" class="btn btn-primary" id="btn-agent-login" style="width: 100%; padding: 16px;">Access Workspace</button>
+                    <div style="margin-top: 24px; text-align: center;"><a href="#" data-action="show-register" style="color: var(--primary); text-decoration: none; font-weight: 700; font-size:0.9rem;">Request Profile Creation</a></div>
+                </form>
+
+                <form id="form-admin-login" style="display: none;">
+                    <div class="form-group"><label class="form-label">Admin Security PIN</label><input type="password" id="admin-pin" class="form-control" required placeholder="Enter PIN"></div>
+                    <button type="submit" class="btn btn-primary" id="btn-admin-login" style="width: 100%; padding: 16px;">Access Admin</button>
+                </form>
+            </div>
+
+            <div id="register-container" style="display: none;">
+                <h3 style="margin-bottom: 8px; text-align: left;">Agent Registration</h3>
+                <p class="text-sm text-muted" style="margin-bottom: 24px; text-align: left;">Create your secure profile.</p>
+                <div id="reg-error-msg" class="form-error"></div>
+                <form id="form-agent-register">
+                    <div class="form-group"><label class="form-label">Full Name</label><input type="text" id="reg-name" class="form-control" required placeholder="e.g. Rahul Sharma"></div>
+                    <div class="form-group"><label class="form-label">Phone Number</label><input type="tel" id="reg-phone" class="form-control" required placeholder="10-digit mobile number"></div>
+                    <button type="submit" class="btn btn-primary" id="btn-agent-reg" style="width: 100%; padding: 16px;">Register</button>
+                    <div style="margin-top: 24px; text-align:center;"><a href="#" data-action="show-login" style="color: var(--text-secondary); text-decoration: none; font-weight: 600; font-size:0.9rem;">&larr; Back to Login</a></div>
+                </form>
+                <div id="reg-success" style="display: none; text-align: left;">
+                    <div style="background: var(--success-soft); padding: 20px; border-radius: var(--radius-sm); border: 1px solid #BEE3D2; margin-bottom:24px;">
+                        <h4 style="color: var(--success); margin-bottom: 12px;">Profile Created Successfully</h4>
+                        <p class="text-sm" style="color: var(--text-secondary);">Save credentials immediately. Password will not be shown again.</p>
+                    </div>
+                    <div style="background: var(--bg); padding: 20px; border-radius: 12px; font-family: monospace; font-size: 1.1rem; border: 1px solid var(--border);">
+                        <div style="margin-bottom: 12px;"><span class="text-muted text-sm font-sans font-bold">LOGIN ID</span><br><strong id="show-login-id" style="color: var(--text); font-size:1.2rem;"></strong></div>
+                        <div><span class="text-muted text-sm font-sans font-bold">TEMP PASSWORD</span><br><strong id="show-password" style="color: var(--danger); font-size:1.2rem;"></strong></div>
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 24px; padding:16px;" data-action="show-login">Proceed to Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="app">
+        <div class="sidebar-overlay" data-action="toggle-sidebar"></div>
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="logo.webp" style="height:28px; width:auto; object-fit:contain;" alt="">
+                <span style="font-weight: 800; font-size: 1.1rem; color: var(--text);">TheAdiZen</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a class="nav-item active" data-action="nav" data-view="dashboard" id="nav-dashboard">Queues & Activity</a>
+                <a class="nav-item" data-action="nav" data-view="leads" id="nav-leads">Shared Pool</a>
+                <a class="nav-item admin-only" data-action="nav" data-view="analytics" id="nav-analytics">Analytics</a>
+                <a class="nav-item admin-only" data-action="nav" data-view="agents" id="nav-agents">Agent Directory</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div style="display: flex; align-items: center; gap: 12px; overflow:hidden;">
+                    <div id="sidebar-user-color" style="min-width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 0.9rem;"></div>
+                    <div style="overflow:hidden;">
+                        <div class="font-bold text-sm" id="sidebar-user-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Name</div>
+                        <div class="text-xs text-muted" id="sidebar-user-role">Role</div>
+                    </div>
+                </div>
+                <button data-action="logout" style="background:none; border:none; cursor:pointer; color: var(--danger); padding: 8px;" title="Logout">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <div class="menu-toggle" data-action="toggle-sidebar"><svg width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></div>
+                    <h2 id="page-title" style="font-size: 1.3rem;">Queues & Activity</h2>
+                </div>
+                <button class="btn btn-primary" data-action="open-modal" data-modal="add-lead-modal" style="border-radius: 30px; padding: 10px 20px;">+ <span class="hide-mobile" style="margin-left: 4px;">Add Lead</span></button>
+            </header>
+
+            <div class="content-area">
+                <!-- Dashboard / Queues -->
+                <div id="view-dashboard" class="view-section active">
+                    <div class="grid grid-3" style="margin-bottom: 24px;">
+                        <div class="bento-card" style="padding: 20px; display: flex; flex-direction: column; justify-content: center;">
+                            <h4 style="margin-bottom:12px; font-size:1rem; color: var(--text-secondary);">Operational Queue</h4>
+                            <select id="desktop-queue-selector" class="form-control" style="font-weight:700; border-color: var(--primary-soft); background: var(--surface);">
+                                <option value="ALL">All Active Leads</option>
+                                <optgroup label="Lead Status">
+                                    <option value="NEW">New Leads</option>
+                                    <option value="UNCONTACTED">Uncontacted (0 Attempts)</option>
+                                    <option value="CONTACTED">Contacted</option>
+                                </optgroup>
+                                <optgroup label="Call Outcomes">
+                                    <option value="CONNECTED">Connected & Talked</option>
+                                    <option value="NO_ANSWER">No Answer / Didn't Receive</option>
+                                    <option value="BUSY">Busy / No Time</option>
+                                    <option value="CALL_CUT">Call Cut</option>
+                                    <option value="ASKED_LATER">Asked to Call Later</option>
+                                    <option value="WRONG_NUMBER">Wrong Number</option>
+                                </optgroup>
+                                <optgroup label="Follow-up Workflows">
+                                    <option value="FU_RETRY">Retry Calls</option>
+                                    <option value="FU_CALLBACKS">Callbacks</option>
+                                    <option value="FU_CONVERSATION">Conversation Follow-ups</option>
+                                </optgroup>
+                                <optgroup label="Timeline">
+                                    <option value="FU_OVERDUE">Overdue Tasks</option>
+                                    <option value="FU_TODAY">Due Today</option>
+                                    <option value="FU_UPCOMING">Upcoming Tasks</option>
+                                </optgroup>
+                                <optgroup label="History">
+                                    <option value="FU_COMPLETED">Completed Follow-ups</option>
+                                </optgroup>
+                            </select>
+                            
+                            <button id="mobile-queue-trigger" class="btn btn-outline" data-action="open-picker" style="display: none; justify-content: space-between; width: 100%; border-color: var(--primary-soft); padding: 14px;">
+                                <span id="mobile-queue-label" style="font-weight: 700;">All Active Leads</span>
+                                <svg width="18" height="18" stroke="var(--primary)" stroke-width="2.5" fill="none"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </button>
+                        </div>
+                        
+                        <div class="bento-card bento-teal" style="padding:20px;">
+                            <p class="text-xs font-heavy uppercase" style="color:var(--text-secondary);">My Calls Today</p>
+                            <h2 id="q-stat-today" style="font-size:2.8rem; margin-top:8px; color:var(--text);">0</h2>
+                        </div>
+                        <div class="bento-card bento-amber" style="padding:20px;">
+                            <p class="text-xs font-heavy uppercase" style="color:var(--warning);">My Pending Tasks</p>
+                            <h2 id="q-stat-tasks" style="font-size:2.8rem; margin-top:8px; color:var(--warning);">0</h2>
+                        </div>
+                    </div>
+                    
+                    <h4 style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom:16px;">Queue Results (<span id="q-stat-size">0</span>)</h4>
+                    <div id="queue-list-container" style="display:flex; flex-direction:column; gap:16px;"></div>
+                </div>
+
+                <!-- Shared Lead Pool -->
+                <div id="view-leads" class="view-section">
+                    <div class="bento-card" style="margin-bottom: 24px; padding: 16px 24px;">
+                        <input type="text" id="search-input" class="form-control" style="border-radius: 40px; font-weight: 500;" placeholder="Search phone, name, location...">
+                    </div>
+                    <div class="bento-card" style="padding:0; overflow:hidden;">
+                        <div style="overflow-x: auto;">
+                            <table class="table-responsive" style="width: 100%; border-collapse: collapse; text-align: left;">
+                                <thead>
+                                    <tr>
+                                        <th style="padding:20px; background:var(--bg); font-size:0.75rem; color:var(--muted); font-weight:800; text-transform:uppercase;">Client</th>
+                                        <th style="padding:20px; background:var(--bg); font-size:0.75rem; color:var(--muted); font-weight:800; text-transform:uppercase;">Phone</th>
+                                        <th style="padding:20px; background:var(--bg); font-size:0.75rem; color:var(--muted); font-weight:800; text-transform:uppercase;" class="hide-mobile">Stage</th>
+                                        <th style="padding:20px; background:var(--bg); font-size:0.75rem; color:var(--muted); font-weight:800; text-transform:uppercase;" class="hide-mobile">Last Activity</th>
+                                        <th style="padding:20px; background:var(--bg);"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leads-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Analytics -->
+                <div id="view-analytics" class="view-section admin-only">
+                    <div class="bento-card" style="margin-bottom: 24px; padding: 20px; display:flex; gap: 16px; align-items:center; flex-wrap:wrap; background: var(--bg);">
+                        <span class="font-bold text-sm" style="color:var(--text-secondary);">Filters:</span>
+                        <select id="analytics-date" class="form-control" style="width:160px;"><option value="30 Days">Last 30 Days</option><option value="7 Days">Last 7 Days</option><option value="Today">Today</option><option value="Custom">Custom Range</option></select>
+                        <input type="date" id="analytics-start" class="form-control" style="width:140px; display:none;">
+                        <input type="date" id="analytics-end" class="form-control" style="width:140px; display:none;">
+                        <select id="analytics-agent" class="form-control" style="width:200px;"><option value="ALL">All Agents</option></select>
+                        <button class="btn btn-primary" id="btn-refresh-analytics" data-action="refresh-analytics">Refresh</button>
+                    </div>
+                    <div class="grid grid-4" style="margin-bottom: 24px;" id="analytics-metrics-top"></div>
+                    <div class="grid grid-2" style="margin-bottom: 24px;">
+                        <div class="bento-card" style="height: 380px; display:flex; flex-direction:column;"><h4 style="margin-bottom:20px;">Daily Call Progress</h4><div style="flex:1; position:relative;"><canvas id="chartProgress"></canvas></div></div>
+                        <div class="bento-card" style="height: 380px; display:flex; flex-direction:column;"><h4 style="margin-bottom:20px;">Outcome Distribution</h4><div style="flex:1; position:relative;"><canvas id="chartOutcomes"></canvas></div></div>
+                    </div>
+                    <div class="grid grid-2">
+                        <div class="bento-card">
+                            <h4 style="margin-bottom:20px;">Agent Performance</h4>
+                            <div style="overflow-x:auto;"><table style="width:100%; border-collapse:collapse; text-align:left;">
+                                <thead><tr><th style="padding:12px 8px; font-size:0.75rem; color:var(--muted);">Agent</th><th style="padding:12px 8px; font-size:0.75rem; color:var(--muted);">Calls</th><th style="padding:12px 8px; font-size:0.75rem; color:var(--muted);">Connected</th><th style="padding:12px 8px; font-size:0.75rem; color:var(--muted);">Unique</th></tr></thead>
+                                <tbody id="analytics-agents-tbody"></tbody>
+                            </table></div>
+                        </div>
+                        <div class="bento-card">
+                            <h4 style="margin-bottom:20px;">Task Distribution</h4>
+                            <div id="analytics-fu-stats" style="display:flex; flex-direction:column; gap:12px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Agents -->
+                <div id="view-agents" class="view-section admin-only">
+                    <div class="bento-card" style="padding: 0; overflow-x:auto;">
+                        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                            <thead><tr>
+                                <th style="padding:20px; background:var(--bg); border-bottom:1px solid var(--border); font-size:0.75rem; color:var(--muted); font-weight:800;">Agent</th>
+                                <th style="padding:20px; background:var(--bg); border-bottom:1px solid var(--border); font-size:0.75rem; color:var(--muted); font-weight:800;">Phone / ID</th>
+                                <th style="padding:20px; background:var(--bg); border-bottom:1px solid var(--border); font-size:0.75rem; color:var(--muted); font-weight:800;">Metrics (Today)</th>
+                                <th style="padding:20px; background:var(--bg); border-bottom:1px solid var(--border); font-size:0.75rem; color:var(--muted); font-weight:800;">Status</th>
+                                <th style="padding:20px; background:var(--bg); border-bottom:1px solid var(--border); text-align: right;">Security</th>
+                            </tr></thead>
+                            <tbody id="agents-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    
+    <!-- Add Lead -->
+    <div class="modal-overlay" id="add-lead-modal">
+        <div class="modal" style="max-width: 440px;">
+            <div class="modal-header"><h3>Add Lead</h3><button type="button" class="close-btn" data-action="close-modal" data-modal="add-lead-modal"><svg width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>
+            <div class="modal-body">
+                <form id="form-add-lead">
+                    <div class="form-group">
+                        <label class="form-label" style="text-align: center;">Client Phone Number</label>
+                        <input type="tel" id="new-lead-phone" class="form-control" required placeholder="e.g. 9876543210" style="font-size: 1.8rem; padding: 24px; text-align:center; font-family:monospace; font-weight:700;">
+                    </div>
+                    <div id="add-lead-error" class="form-error"></div>
+                    <button type="submit" class="btn btn-primary" id="btn-submit-add" style="width: 100%; padding: 16px; border-radius: 40px; font-size:1.05rem;">Save & Open Workspace</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Duplicate Warning -->
+    <div class="modal-overlay" id="duplicate-modal" style="z-index: 105;">
+        <div class="modal" style="max-width:440px;">
+            <div class="modal-header" style="background: var(--warning-soft); border-bottom: 1px solid #FFE082;">
+                <h3 style="color: var(--warning);">Number Exists</h3>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 20px; font-weight:600;">This number is already in the active pool.</p>
+                <div style="background: var(--bg); padding: 20px; border-radius: var(--radius-sm); border: 1px solid var(--border); margin-bottom: 24px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid var(--surface);">
+                        <span class="text-muted font-bold text-sm">Added By</span><strong id="dup-added-by" style="color:var(--primary);"></strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span class="text-muted font-bold text-sm">Name</span><strong id="dup-name"></strong></div>
+                    <div style="display:flex; justify-content:space-between;"><span class="text-muted font-bold text-sm">Phone</span><strong id="dup-phone" style="font-family:monospace;"></strong></div>
+                </div>
+                <div style="display:flex; gap:16px;">
+                    <button class="btn btn-outline" style="flex:1; padding: 14px;" data-action="close-modal" data-modal="duplicate-modal">Cancel</button>
+                    <button class="btn btn-primary" style="flex:2; padding: 14px;" data-action="open-dup-360">Open Existing Lead</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full-Screen Lead 360 -->
+    <div class="modal-overlay" id="lead-360-modal">
+        <div class="modal l360-wrapper">
+            <div class="modal-header">
+                <div><h2 id="l360-name" style="font-size: 1.6rem; margin-bottom:4px;">Client Name</h2><p class="text-sm font-bold" id="l360-store-loc" style="color: var(--primary);">Phone • Store</p></div>
+                <div style="display: flex; gap: 16px; align-items: center;">
+                    <span id="l360-stage-badge" class="badge badge-primary hide-mobile">Stage</span>
+                    <button type="button" class="close-btn" data-action="close-modal" data-modal="lead-360-modal"><svg width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                </div>
+            </div>
+            
+            <div class="l360-container">
+                <div class="l360-left">
+                    <a href="#" id="l360-call-btn" class="btn btn-primary" style="display:flex; width: 100%; padding: 16px; border-radius: 40px; font-size: 1.1rem; gap:12px; margin-bottom:32px; box-shadow: var(--shadow-float);">
+                        <svg width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                        CALL NOW
+                    </a>
+                    <form id="form-edit-lead">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px;">
+                            <h4 style="font-size:1.1rem;">Lead Details</h4>
+                            <button type="submit" class="btn btn-outline" id="btn-save-details" style="padding: 8px 16px; font-size: 0.8rem;">Save Edits</button>
+                        </div>
+                        <div class="form-group"><label class="form-label">Client Name</label><input type="text" id="edit-name" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">Store / Business Name</label><input type="text" id="edit-store" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">Location / City</label><input type="text" id="edit-location" class="form-control"></div>
+                        <div class="grid grid-2" style="gap:16px;">
+                            <div class="form-group"><label class="form-label">Stage</label><select id="edit-stage" class="form-control"><option>New</option><option>Contacted</option><option>Conversation Started</option><option>Qualified</option><option>Demo</option><option>Proposal</option><option>Negotiation</option><option>Won</option><option>Lost</option></select></div>
+                            <div class="form-group"><label class="form-label">Priority</label><select id="edit-priority" class="form-control"><option>High</option><option>Medium</option><option>Low</option></select></div>
+                        </div>
+                        <div class="form-group"><label class="form-label">Notes</label><textarea id="edit-notes" class="form-control" style="height:100px; resize:vertical;"></textarea></div>
+                    </form>
+                </div>
+                <div class="l360-right">
+                    <div class="bento-card bento-teal" style="padding: 24px;">
+                        <h4 style="margin-bottom: 16px; color: var(--primary-dark);">Log Call Outcome</h4>
+                        <div class="grid grid-2" style="gap: 12px; margin-bottom: 16px;">
+                            <button type="button" class="btn btn-outline l360-outcome-btn" style="justify-content:flex-start; padding:12px; border-color:var(--border);" data-action="log-outcome" data-val="Connected & Talked">🟢 Connected</button>
+                            <button type="button" class="btn btn-outline l360-outcome-btn" style="justify-content:flex-start; padding:12px; border-color:var(--border);" data-action="log-outcome" data-val="No Answer / Didn't Receive">⚪ No Answer</button>
+                            <button type="button" class="btn btn-outline l360-outcome-btn" style="justify-content:flex-start; padding:12px; border-color:var(--border);" data-action="log-outcome" data-val="Busy / No Time">🟡 Busy</button>
+                            <button type="button" class="btn btn-outline l360-outcome-btn" style="justify-content:flex-start; padding:12px; border-color:var(--border);" data-action="log-outcome" data-val="Call Cut">🟠 Call Cut</button>
+                            <button type="button" class="btn btn-outline l360-outcome-btn" style="justify-content:flex-start; padding:12px; border-color:var(--border);" data-action="log-outcome" data-val="Asked to Call Later">🟡 Call Later</button>
+                            <button type="button" class="btn btn-outline l360-outcome-btn" style="justify-content:flex-start; padding:12px; border-color:var(--border);" data-action="log-outcome" data-val="Wrong Number">🟣 Wrong Number</button>
+                            <button type="button" class="btn btn-outline l360-outcome-btn" style="justify-content:flex-start; padding:12px; background:var(--danger-soft); color:var(--danger); border-color:#FAD2D2; grid-column: 1 / -1;" data-action="log-outcome" data-val="Not Interested">🔴 Not Interested (Archive)</button>
+                        </div>
+                        <input type="text" id="call-notes" class="form-control" placeholder="Optional call notes..." style="background: var(--surface);">
+                    </div>
+                    <div class="grid grid-2" style="gap: 20px;">
+                        <div class="bento-card" style="padding:24px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <h4 style="font-size:1.1rem;">Scheduled Tasks</h4>
+                                <button type="button" class="btn btn-primary" style="padding: 6px 14px; font-size: 0.8rem; border-radius: 20px;" data-action="open-modal" data-modal="follow-up-modal">+ Add</button>
+                            </div>
+                            <div id="l360-followups" style="display:flex; flex-direction:column; gap:12px; max-height: 250px; overflow-y: auto;"></div>
+                        </div>
+                        <div class="bento-card" style="padding:24px; background: var(--bg); border:none;">
+                            <h4 style="margin-bottom: 20px; font-size:1.1rem;">History</h4>
+                            <div id="l360-history" style="display:flex; flex-direction:column; gap:16px; max-height: 250px; overflow-y: auto; padding-right:8px;"><div style="text-align:center; padding:20px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="3" style="animation: spin 0.8s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Task -->
+    <div class="modal-overlay" id="follow-up-modal" style="z-index: 110;">
+        <div class="modal" style="max-width:440px;">
+            <div class="modal-header"><h3>Schedule Task</h3><button type="button" class="close-btn" data-action="close-modal" data-modal="follow-up-modal"><svg width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>
+            <div class="modal-body">
+                <form id="form-schedule-fu">
+                    <div class="form-group">
+                        <label class="form-label">Workflow</label>
+                        <select id="fu-bucket" class="form-control" required><option>Retry Calls</option><option>Callbacks</option><option>Conversation Follow-ups</option></select>
+                    </div>
+                    <div class="form-group grid grid-2" style="gap:16px;">
+                        <div><label class="form-label">Date</label><input type="date" id="fu-date" class="form-control" required></div>
+                        <div><label class="form-label">Time</label><input type="time" id="fu-time" class="form-control"></div>
+                    </div>
+                    <div class="form-group"><label class="form-label">Notes</label><textarea id="fu-note" class="form-control" style="height: 100px; resize:vertical;"></textarea></div>
+                    <button type="submit" class="btn btn-primary" id="btn-submit-fu" style="width: 100%; padding: 16px;">Save Task</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reschedule Task -->
+    <div class="modal-overlay" id="reschedule-modal" style="z-index: 115;">
+        <div class="modal" style="max-width:440px;">
+            <div class="modal-header"><h3>Reschedule Task</h3><button type="button" class="close-btn" data-action="close-modal" data-modal="reschedule-modal"><svg width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>
+            <div class="modal-body">
+                <form id="form-reschedule-fu">
+                    <input type="hidden" id="fu-resched-id">
+                    <div class="form-group grid grid-2" style="gap:16px;">
+                        <div><label class="form-label">New Date</label><input type="date" id="fu-resched-date" class="form-control" required></div>
+                        <div><label class="form-label">New Time</label><input type="time" id="fu-resched-time" class="form-control"></div>
+                    </div>
+                    <div class="form-group"><label class="form-label">Update Note</label><textarea id="fu-resched-note" class="form-control" style="height: 100px; resize:vertical;"></textarea></div>
+                    <button type="submit" class="btn btn-primary" id="btn-submit-resched" style="width: 100%; padding: 16px;">Save Reschedule</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mobile Bottom Sheet Picker -->
+    <div class="sidebar-overlay" id="queue-picker-overlay" data-action="close-picker" style="z-index: 104;"></div>
+    <div class="queue-picker-sheet" id="queue-picker-sheet">
+        <div style="padding: 24px; border-bottom: 1px solid var(--border); display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.95); position:sticky; top:0;">
+            <h3 style="font-size: 1.2rem;">Select Queue</h3><button class="close-btn" data-action="close-picker"><svg width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+        </div>
+        <div style="overflow-y: auto; flex:1;">
+            <button class="queue-btn" data-action="set-queue" data-val="ALL">All Active Leads</button>
+            <div class="queue-group-title">Status</div>
+            <button class="queue-btn" data-action="set-queue" data-val="NEW">New Leads</button>
+            <button class="queue-btn" data-action="set-queue" data-val="UNCONTACTED">Uncontacted (0 Attempts)</button>
+            <button class="queue-btn" data-action="set-queue" data-val="CONTACTED">Contacted</button>
+            <div class="queue-group-title">Outcomes</div>
+            <button class="queue-btn" data-action="set-queue" data-val="CONNECTED">Connected & Talked</button>
+            <button class="queue-btn" data-action="set-queue" data-val="NO_ANSWER">No Answer</button>
+            <button class="queue-btn" data-action="set-queue" data-val="BUSY">Busy / No Time</button>
+            <button class="queue-btn" data-action="set-queue" data-val="CALL_CUT">Call Cut</button>
+            <button class="queue-btn" data-action="set-queue" data-val="ASKED_LATER">Call Later</button>
+            <button class="queue-btn" data-action="set-queue" data-val="WRONG_NUMBER">Wrong Number</button>
+            <div class="queue-group-title">Tasks</div>
+            <button class="queue-btn" data-action="set-queue" data-val="FU_RETRY">Retry Calls</button>
+            <button class="queue-btn" data-action="set-queue" data-val="FU_CALLBACKS">Callbacks</button>
+            <button class="queue-btn" data-action="set-queue" data-val="FU_CONVERSATION">Conversations</button>
+            <div class="queue-group-title">Timeline</div>
+            <button class="queue-btn" data-action="set-queue" data-val="FU_OVERDUE" style="color:var(--danger);">Overdue Tasks</button>
+            <button class="queue-btn" data-action="set-queue" data-val="FU_TODAY" style="color:var(--warning);">Due Today</button>
+            <button class="queue-btn" data-action="set-queue" data-val="FU_UPCOMING" style="color:var(--primary);">Upcoming Tasks</button>
+            <div class="queue-group-title">History</div>
+            <button class="queue-btn" data-action="set-queue" data-val="FU_COMPLETED">Completed FUs</button>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // GOOGLE APPS SCRIPT WEB APP CONFIGURATION
+        // Paste your deployed /exec URL below when using the external fallback transport.
+        // ============================================================
+        const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbypdjVZzHrrE45pEeWMSQ2JEqxb_huCIp74ajA0Q-C4OxigaVgLZ4DEUvrNlbR0ezlf/exec";
+
+        const state = {
+            token: null, user: null, leads: [], followUps: [], callsCache: {},
+            agents: [], currentLeadId: null, duplicateObj: null, charts: {}, lastQueue: 'ALL',
+            queueLabels: {
+                'ALL':'All Active Leads', 'NEW':'New Leads', 'UNCONTACTED':'Uncontacted', 'CONTACTED':'Contacted',
+                'CONNECTED':'Connected & Talked', 'NO_ANSWER':'No Answer', 'BUSY':'Busy / No Time', 'CALL_CUT':'Call Cut', 'ASKED_LATER':'Asked to Call Later', 'WRONG_NUMBER':'Wrong Number',
+                'FU_RETRY':'Retry Calls', 'FU_CALLBACKS':'Callbacks', 'FU_CONVERSATION':'Conversation Follow-ups',
+                'FU_OVERDUE':'Overdue Tasks', 'FU_TODAY':'Due Today', 'FU_UPCOMING':'Upcoming Tasks', 'FU_COMPLETED':'Completed Follow-ups'
+            }
+        };
+
+        const PERF_DEBUG = false;
+        function logPerf(label, start) { if(PERF_DEBUG) console.log(`[PERF] ${label}: ${(performance.now()-start).toFixed(2)}ms`); }
+
+        function esc(str) {
+            if (str === null || str === undefined) return '';
+            return String(str).replace(/[&<>"']/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[m]);
+        }
+
+        function getISTDateTime() {
+            const istDate = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
+            const pad = n => n<10?'0'+n:n;
+            return {
+                date: `${istDate.getFullYear()}-${pad(istDate.getMonth()+1)}-${pad(istDate.getDate())}`,
+                time: `${pad(istDate.getHours())}:${pad(istDate.getMinutes())}`,
+                full: `${istDate.getFullYear()}-${pad(istDate.getMonth()+1)}-${pad(istDate.getDate())}T${pad(istDate.getHours())}:${pad(istDate.getMinutes())}:00`
+            };
+        }
+
+        function btnLoading(id, isLoading, text="") {
+            const btn = document.getElementById(id); if(!btn) return;
+            if(isLoading) { btn.dataset.orig = btn.innerHTML; btn.innerHTML = text || btn.innerHTML; btn.classList.add('loading'); btn.disabled = true; }
+            else { btn.innerHTML = btn.dataset.orig; btn.classList.remove('loading'); btn.disabled = false; }
+        }
+
+        async function apiCall(action, payload = {}) {
+            if (state.token) payload.token = state.token;
+            return new Promise(async (resolve, reject) => {
+                if (typeof google !== 'undefined' && google.script && google.script.run) {
+                    google.script.run.withSuccessHandler(resolve).withFailureHandler(err => {
+                        console.error("Backend Error:", err); resolve({ success: false, error: "Unable to complete this action. Please try again." });
+                    })[action](payload);
+                } else if (APP_SCRIPT_URL) {
+                    try {
+                        const res = await fetch(APP_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action, payload }) });
+                        resolve(await res.json());
+                    } catch (e) {
+                        console.error("Fetch Error:", e); resolve({ success: false, error: "Unable to complete this action. Please try again." });
+                    }
+                } else {
+                    resolve({ success: false, error: "Unable to complete this action. Please try again." });
+                }
+            });
+        }
+
+        document.addEventListener('click', e => {
+            const btn = e.target.closest('[data-action]'); if (!btn) return;
+            const action = btn.dataset.action;
+            switch(action) {
+                case 'switch-auth': 
+                    document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
+                    document.getElementById('form-agent-login').style.display = btn.dataset.type === 'agent' ? 'block' : 'none';
+                    document.getElementById('form-admin-login').style.display = btn.dataset.type === 'admin' ? 'block' : 'none';
+                    btn.classList.add('active');
+                    document.querySelectorAll('.form-error').forEach(el=>el.style.display='none');
+                    break;
+                case 'show-register': 
+                    document.getElementById('auth-forms-container').style.display = 'none'; document.getElementById('register-container').style.display = 'block'; document.querySelectorAll('.form-error').forEach(el=>el.style.display='none'); break;
+                case 'show-login': 
+                    document.getElementById('register-container').style.display = 'none'; document.getElementById('auth-forms-container').style.display = 'block'; document.getElementById('reg-success').style.display='none'; document.getElementById('form-agent-register').style.display='block'; break;
+                case 'nav': navTo(btn.dataset.view); break;
+                case 'toggle-sidebar': 
+                    const sb = document.getElementById('sidebar'); const ov = document.querySelector('.sidebar-overlay:not(#queue-picker-overlay)');
+                    if(!sb.classList.contains('open')){ sb.classList.add('open'); ov.classList.add('active'); } else { sb.classList.remove('open'); ov.classList.remove('active'); }
+                    break;
+                case 'open-modal': document.getElementById(btn.dataset.modal).classList.add('active'); break;
+                case 'close-modal': document.getElementById(btn.dataset.modal).classList.remove('active'); break;
+                case 'open-360': openLead360(btn.dataset.id); break;
+                case 'open-dup-360': 
+                    document.getElementById('duplicate-modal').classList.remove('active');
+                    if(state.duplicateObj && state.duplicateObj.LeadID) openLead360(state.duplicateObj.LeadID); break;
+                case 'log-outcome': quickLogOutcome(btn.dataset.val); break;
+                case 'open-resched': 
+                    document.getElementById('fu-resched-id').value = btn.dataset.id;
+                    document.getElementById('fu-resched-date').value = btn.dataset.date;
+                    document.getElementById('fu-resched-time').value = btn.dataset.time;
+                    document.getElementById('fu-resched-note').value = btn.dataset.note;
+                    document.getElementById('reschedule-modal').classList.add('active'); break;
+                case 'complete-fu': completeFollowUp(btn.dataset.id); break;
+                case 'delete-fu': deleteFollowUp(btn.dataset.id); break;
+                case 'logout': handleLogout(); break;
+                case 'refresh-analytics': loadAnalytics(); break;
+                case 'open-picker': document.getElementById('queue-picker-sheet').classList.add('active'); document.getElementById('queue-picker-overlay').classList.add('active'); break;
+                case 'close-picker': document.getElementById('queue-picker-sheet').classList.remove('active'); document.getElementById('queue-picker-overlay').classList.remove('active'); break;
+                case 'set-queue':
+                    document.getElementById('desktop-queue-selector').value = btn.dataset.val;
+                    document.getElementById('queue-picker-sheet').classList.remove('active'); document.getElementById('queue-picker-overlay').classList.remove('active');
+                    renderActiveQueue(); break;
+                case 'toggle-agent': toggleAgentStatus(btn.dataset.id, btn.dataset.status); break;
+                case 'reset-pass': resetAgentPass(btn.dataset.id); break;
+            }
+        });
+
+        document.getElementById('form-agent-login').addEventListener('submit', handleAgentLogin);
+        document.getElementById('form-admin-login').addEventListener('submit', handleAdminLogin);
+        document.getElementById('form-agent-register').addEventListener('submit', handleAgentRegistration);
+        document.getElementById('form-add-lead').addEventListener('submit', handleAddLead);
+        document.getElementById('form-edit-lead').addEventListener('submit', handleEditLead);
+        document.getElementById('form-schedule-fu').addEventListener('submit', handleScheduleFollowUp);
+        document.getElementById('form-reschedule-fu').addEventListener('submit', handleReschedule);
+        document.getElementById('desktop-queue-selector').addEventListener('change', renderActiveQueue);
+        
+        let searchTimeout;
+        document.getElementById('search-input').addEventListener('input', () => { clearTimeout(searchTimeout); searchTimeout = setTimeout(renderLeadsList, 300); });
+        document.getElementById('analytics-date').addEventListener('change', loadAnalytics);
+        document.getElementById('analytics-agent').addEventListener('change', loadAnalytics);
+
+        window.addEventListener('DOMContentLoaded', restoreExistingSession);
+
+        async function restoreExistingSession() {
+            const token = localStorage.getItem('tz_token');
+            if (token) {
+                const res = await apiCall('validateSession', { token });
+                if (res.success) {
+                    state.token = token; state.user = res.user;
+                    await loadInitialData(); return;
+                } else if(res.error === "Session expired.") { localStorage.removeItem('tz_token'); }
+            }
+            document.getElementById('boot-ui').style.opacity = '0';
+            setTimeout(() => { document.getElementById('boot-ui').style.display = 'none'; document.getElementById('app').style.display = 'none'; document.getElementById('auth-view').style.display = 'flex'; }, 300);
+        }
+
+        async function handleAgentRegistration(e) {
+            e.preventDefault();
+            const name = document.getElementById('reg-name').value; const phone = document.getElementById('reg-phone').value;
+            const errEl = document.getElementById('reg-error-msg'); errEl.style.display = 'none';
+            btnLoading('btn-agent-reg', true);
+            const res = await apiCall('registerCallAgent', { name, phone });
+            btnLoading('btn-agent-reg', false);
+            if (res.success) {
+                document.getElementById('form-agent-register').style.display = 'none';
+                document.getElementById('reg-success').style.display = 'block';
+                document.getElementById('show-login-id').textContent = res.loginId;
+                document.getElementById('show-password').textContent = res.temporaryPassword;
+            } else { errEl.textContent = res.error; errEl.style.display = 'block'; }
+        }
+
+        async function handleAgentLogin(e) {
+            e.preventDefault();
+            const loginId = document.getElementById('agent-login-id').value; const password = document.getElementById('agent-password').value;
+            const errEl = document.getElementById('auth-error-msg'); errEl.style.display = 'none';
+            btnLoading('btn-agent-login', true);
+            const res = await apiCall('authenticateCallAgent', { loginId, password });
+            btnLoading('btn-agent-login', false);
+            if (res.success) {
+                state.token = res.session.token; state.user = res.session.user; localStorage.setItem('tz_token', state.token);
+                document.getElementById('auth-view').style.display = 'none'; document.getElementById('boot-ui').style.display = 'flex'; document.getElementById('boot-ui').style.opacity = '1';
+                await loadInitialData();
+            } else { errEl.textContent = res.error; errEl.style.display = 'block'; }
+        }
+
+        async function handleAdminLogin(e) {
+            e.preventDefault();
+            const pin = document.getElementById('admin-pin').value;
+            const errEl = document.getElementById('auth-error-msg'); errEl.style.display = 'none';
+            btnLoading('btn-admin-login', true);
+            const res = await apiCall('authenticateAdmin', { pin });
+            btnLoading('btn-admin-login', false);
+            if (res.success) {
+                state.token = res.session.token; state.user = res.session.user; localStorage.setItem('tz_token', state.token);
+                document.getElementById('auth-view').style.display = 'none'; document.getElementById('boot-ui').style.display = 'flex'; document.getElementById('boot-ui').style.opacity = '1';
+                await loadInitialData();
+            } else { errEl.textContent = res.error; errEl.style.display = 'block'; }
+        }
+
+        async function handleLogout() {
+            apiCall('logoutSession', {}); localStorage.removeItem('tz_token'); window.location.reload();
+        }
+
+        async function loadInitialData() {
+            const pStart = performance.now();
+            const res = await apiCall('getInitialAppData', {});
+            logPerf("Initial Boot Load", pStart);
+            if (res.success) {
+                state.leads = res.data.leads || []; state.followUps = res.data.followUps || [];
+                document.getElementById('q-stat-today').textContent = res.data.myCallsToday || 0;
+                
+                document.getElementById('sidebar-user-name').textContent = esc(state.user.agentName);
+                document.getElementById('sidebar-user-role').textContent = state.user.role === 'ADMIN' ? 'Administrator' : 'Call Agent';
+                const colBadge = document.getElementById('sidebar-user-color');
+                colBadge.textContent = esc(state.user.agentName).substring(0,2).toUpperCase();
+                colBadge.style.backgroundColor = state.user.agentColor;
+                
+                if (state.user.role === 'ADMIN') document.body.classList.add('is-admin');
+                
+                document.getElementById('boot-ui').style.opacity = '0';
+                setTimeout(() => { document.getElementById('boot-ui').style.display = 'none'; document.getElementById('app').style.display = 'flex'; navTo('dashboard'); }, 300);
+            } else if (res.error === "Session expired.") { localStorage.removeItem('tz_token'); window.location.reload(); }
+        }
+
+        function navTo(view) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            const vSection = document.getElementById(`view-${view}`); if(vSection) vSection.classList.add('active');
+            const navBtn = document.getElementById(`nav-${view}`); if(navBtn) navBtn.classList.add('active');
+            
+            const titles = { dashboard: 'Queues & Activity', leads: 'Shared Lead Pool', analytics: 'Admin Analytics', agents: 'Agent Directory' };
+            document.getElementById('page-title').textContent = titles[view];
+            
+            const sb = document.getElementById('sidebar'); const ov = document.querySelector('.sidebar-overlay:not(#queue-picker-overlay)');
+            sb.classList.remove('open'); ov.classList.remove('active');
+
+            if (view === 'dashboard') renderActiveQueue();
+            if (view === 'leads') renderLeadsList();
+            if (view === 'analytics' && state.user.role === 'ADMIN') loadAnalyticsSystem();
+            if (view === 'agents' && state.user.role === 'ADMIN') loadAgents();
+        }
+
+        function renderAttribution(id, name, color) {
+            if (!name) return '<span class="text-muted">System</span>';
+            const nameStr = (state.user.agentId === id) ? "You" : name;
+            return `<span style="color: ${color || 'var(--primary)'}; font-weight:700;">${esc(nameStr)}</span>`;
+        }
+
+        function renderActiveQueue() {
+            const pStart = performance.now();
+            const qFilter = document.getElementById('desktop-queue-selector').value; state.lastQueue = qFilter;
+            document.getElementById('mobile-queue-label').textContent = state.queueLabels[qFilter] || 'Active Queue';
+            
+            const ist = getISTDateTime();
+            const container = document.getElementById('queue-list-container');
+            
+            // Re-calc my pending FUs quickly
+            const myPending = state.followUps.filter(f => f.AgentID === state.user.agentId && f.Status === 'PENDING').length;
+            document.getElementById('q-stat-tasks').textContent = myPending;
+
+            let list = [];
+            const lMap = new Map(state.leads.map(l => [l.LeadID, l]));
+
+            if (qFilter === 'ALL') { list = state.leads; list.sort((a,b)=>(b.UpdatedAt||"").localeCompare(a.UpdatedAt||"")); }
+            else if (qFilter === 'NEW') { list = state.leads.filter(l => l.Stage === 'New'); list.sort((a,b)=>(a.CreatedAt||"").localeCompare(b.CreatedAt||"")); }
+            else if (qFilter === 'UNCONTACTED') { list = state.leads.filter(l => parseInt(l.CallAttempts||0) === 0); list.sort((a,b)=>(a.CreatedAt||"").localeCompare(b.CreatedAt||"")); }
+            else if (qFilter === 'CONTACTED') { list = state.leads.filter(l => parseInt(l.CallAttempts||0) > 0); list.sort((a,b)=>(b.LastContactedAt||"").localeCompare(a.LastContactedAt||"")); }
+            else if (['CONNECTED','NO_ANSWER','BUSY','CALL_CUT','ASKED_LATER','WRONG_NUMBER'].includes(qFilter)) {
+                const matchOut = qFilter.replace('_', ' ').toLowerCase(); // simplified approximation, direct map safer:
+                const mapping = {'CONNECTED':'Connected & Talked', 'NO_ANSWER':'No Answer / Didn\'t Receive', 'BUSY':'Busy / No Time', 'CALL_CUT':'Call Cut', 'ASKED_LATER':'Asked to Call Later', 'WRONG_NUMBER':'Wrong Number'};
+                list = state.leads.filter(l => l.LastCallOutcome === mapping[qFilter]);
+                list.sort((a,b)=>(b.LastContactedAt||"").localeCompare(a.LastContactedAt||""));
+            }
+            else if (qFilter.startsWith('FU_')) {
+                let fus = state.followUps;
+                if(qFilter === 'FU_COMPLETED') {
+                    fus = fus.filter(f=>f.Status === 'COMPLETED'); fus.sort((a,b)=>(b.CompletedAt||"").localeCompare(a.CompletedAt||""));
+                } else {
+                    fus = fus.filter(f => f.Status === 'PENDING');
+                    if (qFilter === 'FU_RETRY') { fus = fus.filter(f => f.Bucket === 'Retry Calls'); fus.sort((a,b)=>(a.DueDate+a.DueTime).localeCompare(b.DueDate+b.DueTime)); }
+                    else if (qFilter === 'FU_CALLBACKS') { fus = fus.filter(f => f.Bucket === 'Callbacks'); fus.sort((a,b)=>(a.DueDate+a.DueTime).localeCompare(b.DueDate+b.DueTime)); }
+                    else if (qFilter === 'FU_CONVERSATION') { fus = fus.filter(f => f.Bucket === 'Conversation Follow-ups'); fus.sort((a,b)=>(a.DueDate+a.DueTime).localeCompare(b.DueDate+b.DueTime)); }
+                    else if (qFilter === 'FU_OVERDUE') { fus = fus.filter(f => (f.DueDate+'T'+(f.DueTime||'23:59')) < ist.full); fus.sort((a,b)=>(a.DueDate+a.DueTime).localeCompare(b.DueDate+b.DueTime)); }
+                    else if (qFilter === 'FU_TODAY') { fus = fus.filter(f => f.DueDate === ist.date && (f.DueDate+'T'+(f.DueTime||'23:59')) >= ist.full); fus.sort((a,b)=>(a.DueDate+a.DueTime).localeCompare(b.DueDate+b.DueTime)); }
+                    else if (qFilter === 'FU_UPCOMING') { fus = fus.filter(f => f.DueDate > ist.date); fus.sort((a,b)=>(a.DueDate+a.DueTime).localeCompare(b.DueDate+b.DueTime)); }
+                }
+                list = fus.map(f => { const l = lMap.get(f.LeadID); return l ? {...l, _fu:f} : null; }).filter(Boolean);
+            }
+            
+            document.getElementById('q-stat-size').textContent = list.length;
+            if(list.length === 0) { container.innerHTML = '<div class="bento-card" style="text-align:center; padding:40px;"><p class="text-muted">This queue is empty.</p></div>'; return; }
+
+            const fuPendingMap = new Map();
+            if(!qFilter.startsWith('FU_')) { state.followUps.forEach(f => { if(f.Status==='PENDING' && !fuPendingMap.has(f.LeadID)) fuPendingMap.set(f.LeadID, f); }); }
+
+            container.innerHTML = list.map(l => {
+                const fu = l._fu || fuPendingMap.get(l.LeadID);
+                let tC = '';
+                if(qFilter.includes('RETRY') || qFilter==='NEW') tC = 'bento-blue';
+                if(qFilter.includes('CALLBACKS') || qFilter==='BUSY') tC = 'bento-amber';
+                if(qFilter==='CONNECTED' || qFilter.includes('CONVERSATION')) tC = 'bento-green';
+                if(qFilter==='FU_OVERDUE') tC = 'bento-red';
+                
+                return `
+                <div class="bento-card ${tC}" style="padding:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+                    <div style="flex:1; min-width:200px;">
+                        <div class="font-heavy" style="font-size:1.15rem; margin-bottom:6px; display:flex; align-items:center; gap:8px;">
+                            ${esc(l.Name) || 'No Name'} 
+                            <span class="text-muted text-sm" style="font-family:monospace; font-weight:600;">${esc(l.WhatsApp)}</span>
+                        </div>
+                        <div class="text-sm font-bold text-muted" style="margin-bottom:12px;">${esc(l.StoreName)||'No Store'} • ${esc(l.Location)||'No Location'}</div>
+                        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                            <span class="badge badge-gray">${esc(l.Stage)}</span>
+                            ${l.LastCallOutcome ? `<span class="badge badge-primary">${esc(l.LastCallOutcome)}</span>` : ''}
+                            ${fu && fu.Status==='PENDING' ? `<span class="badge badge-warning">Task: ${esc(fu.DueDate)} ${esc(fu.DueTime)}</span>` : ''}
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:12px; align-items:center;">
+                        <div class="text-right hide-mobile" style="margin-right:16px;">
+                            <div class="text-xs font-bold text-muted">Attempts: ${l.CallAttempts||0}</div>
+                            ${l.LastCallByAgentID ? `<div class="text-xs text-muted" style="margin-top:4px;">Last: ${renderAttribution(l.LastCallByAgentID, l.LastCallByAgentName, l.LastCallByAgentColor)}</div>`:''}
+                        </div>
+                        <button class="btn btn-outline" style="border-radius:30px;" data-action="open-360" data-id="${esc(l.LeadID)}">Open</button>
+                        <a href="tel:${esc(l.WhatsApp)}" class="btn btn-primary" style="border-radius:30px;" data-action="open-360" data-id="${esc(l.LeadID)}">CALL NOW</a>
+                    </div>
+                </div>
+            `}).join('');
+            logPerf("Queue Render", pStart);
+        }
+
+        function renderLeadsList() {
+            const tbody = document.getElementById('leads-tbody'); const q = document.getElementById('search-input').value.toLowerCase();
+            const filtered = state.leads.filter(l => (!q || (l.WhatsApp||'').toLowerCase().includes(q) || (l.Name||'').toLowerCase().includes(q) || (l.Location||'').toLowerCase().includes(q)));
+            filtered.sort((a,b) => (b.UpdatedAt || "").localeCompare(a.UpdatedAt || ""));
+            
+            if (filtered.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:40px;"><p class="text-muted">No records match.</p></td></tr>'; return; }
+            tbody.innerHTML = filtered.map(l => `
+                <tr>
+                    <td data-label="Client"><div class="font-bold">${esc(l.Name) || 'No Name'}</div><div class="text-xs text-muted font-bold" style="margin-top:4px;">${esc(l.StoreName)||'No Store'} • ${esc(l.Location)||'No Location'}</div></td>
+                    <td data-label="Phone"><span style="font-family:monospace; font-size:1.05rem; font-weight:700;">${esc(l.WhatsApp)}</span></td>
+                    <td data-label="Stage" class="hide-mobile"><span class="badge badge-gray">${esc(l.Stage) || 'New'}</span></td>
+                    <td data-label="Last Activity" class="hide-mobile"><div class="text-sm font-bold">${esc(l.LastCallOutcome) || 'Uncontacted'}</div>${l.LastCallByAgentID ? `<div class="text-xs text-muted" style="margin-top:4px;">By: ${renderAttribution(l.LastCallByAgentID, l.LastCallByAgentName, l.LastCallByAgentColor)}</div>`:''}</td>
+                    <td style="text-align: right;"><a href="tel:${esc(l.WhatsApp)}" class="btn btn-primary" style="padding:8px 16px; font-size:0.8rem; border-radius:30px; margin-right:8px;" data-action="open-360" data-id="${esc(l.LeadID)}">CALL</a><button class="btn btn-outline" style="padding:8px 16px; font-size:0.8rem; border-radius:30px;" data-action="open-360" data-id="${esc(l.LeadID)}">Open</button></td>
+                </tr>
+            `).join('');
+        }
+
+        async function handleAddLead(e) {
+            e.preventDefault(); const phone = document.getElementById('new-lead-phone').value;
+            const errEl = document.getElementById('add-lead-error'); errEl.style.display = 'none';
+            btnLoading('btn-submit-add', true);
+            const res = await apiCall('createLead', { phone });
+            btnLoading('btn-submit-add', false);
+            if (res.success) {
+                state.leads.push(res.lead);
+                document.getElementById('add-lead-modal').classList.remove('active'); document.getElementById('new-lead-phone').value = '';
+                if(document.getElementById('view-dashboard').classList.contains('active')) renderActiveQueue();
+                if(document.getElementById('view-leads').classList.contains('active')) renderLeadsList();
+                openLead360(res.lead.LeadID);
+            } else if (res.error === 'DUPLICATE') {
+                document.getElementById('add-lead-modal').classList.remove('active'); state.duplicateObj = res.duplicate;
+                document.getElementById('dup-added-by').textContent = esc(res.duplicate.AddedBy);
+                document.getElementById('dup-name').textContent = esc(res.duplicate.Name) || "No Name";
+                document.getElementById('dup-phone').textContent = esc(res.duplicate.Phone);
+                document.getElementById('duplicate-modal').classList.add('active');
+            } else { errEl.textContent = res.error; errEl.style.display = 'block'; }
+        }
+
+        async function openLead360(leadId) {
+            state.currentLeadId = leadId; const lead = state.leads.find(l => l.LeadID === leadId); if (!lead) return;
+            document.getElementById('l360-name').textContent = esc(lead.Name) || 'No Name Provided';
+            document.getElementById('l360-store-loc').textContent = `${esc(lead.WhatsApp)} • ${esc(lead.Stage)}`;
+            document.getElementById('l360-stage-badge').textContent = esc(lead.Stage) || 'New';
+            document.getElementById('l360-call-btn').href = `tel:${esc(lead.WhatsApp)}`;
+
+            document.getElementById('edit-name').value = lead.Name || ''; document.getElementById('edit-store').value = lead.StoreName || '';
+            document.getElementById('edit-location').value = lead.Location || ''; document.getElementById('edit-stage').value = lead.Stage || 'New';
+            document.getElementById('edit-priority').value = lead.Priority || 'Medium'; document.getElementById('edit-notes').value = lead.Notes || '';
+            document.getElementById('call-notes').value = '';
+            
+            document.getElementById('l360-history').innerHTML = '<div style="text-align:center; padding:20px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="3" style="animation: spin 0.8s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg></div>';
+            renderLeadFollowUps(leadId); document.getElementById('lead-360-modal').classList.add('active');
+            
+            // Lazy load history
+            if(!state.callsCache[leadId]) {
+                const res = await apiCall('getLeadHistory', { leadId });
+                if(res.success) { state.callsCache[leadId] = res.data.calls; renderLeadHistory(leadId); }
+                else { document.getElementById('l360-history').innerHTML = '<p class="text-sm text-muted">Unable to load history.</p>'; }
+            } else { renderLeadHistory(leadId); }
+        }
+
+        async function handleEditLead(e) {
+            e.preventDefault();
+            const leadData = { LeadID: state.currentLeadId, Name: document.getElementById('edit-name').value, StoreName: document.getElementById('edit-store').value, Location: document.getElementById('edit-location').value, Stage: document.getElementById('edit-stage').value, Priority: document.getElementById('edit-priority').value, Notes: document.getElementById('edit-notes').value };
+            btnLoading('btn-save-details', true);
+            const res = await apiCall('updateLead', { leadData });
+            btnLoading('btn-save-details', false);
+            if (res.success) { 
+                const idx = state.leads.findIndex(l => l.LeadID === state.currentLeadId);
+                if(idx !== -1) Object.assign(state.leads[idx], res.updatedFields);
+                openLead360(state.currentLeadId);
+                if(document.getElementById('view-dashboard').classList.contains('active')) renderActiveQueue();
+                if(document.getElementById('view-leads').classList.contains('active')) renderLeadsList();
+            } else alert(res.error);
+        }
+
+        async function quickLogOutcome(outcome) {
+            if (outcome === 'Not Interested' && !confirm("Archive this lead and cancel tasks?")) return;
+            const notes = document.getElementById('call-notes').value;
+            const btns = document.querySelectorAll('.l360-outcome-btn'); btns.forEach(b => b.disabled = true);
+            
+            const res = await apiCall('logCallInteraction', { leadId: state.currentLeadId, outcome, notes });
+            btns.forEach(b => b.disabled = false);
+            if (res.success) {
+                if(!state.callsCache[state.currentLeadId]) state.callsCache[state.currentLeadId] = [];
+                state.callsCache[state.currentLeadId].push(res.call); 
+                
+                if (res.archived) { 
+                    state.leads = state.leads.filter(l => l.LeadID !== state.currentLeadId);
+                    if(res.followUpsDeleted) state.followUps.forEach(f => { if(res.followUpsDeleted.includes(f.FollowUpID)) f.Status = 'DELETED'; });
+                    document.getElementById('lead-360-modal').classList.remove('active'); 
+                } else {
+                    const idx = state.leads.findIndex(l => l.LeadID === state.currentLeadId);
+                    if(idx !== -1) Object.assign(state.leads[idx], res.leadUpdates);
+                    
+                    const pending = state.followUps.filter(f=> f.LeadID === state.currentLeadId && f.Status === 'PENDING');
+                    if (pending.length === 0) {
+                        let autoBucket = '';
+                        if(outcome.includes("No Answer") || outcome.includes("Wrong")) autoBucket = 'Retry Calls';
+                        else if(outcome.includes("Busy") || outcome.includes("Later") || outcome.includes("Cut")) autoBucket = 'Callbacks';
+                        else if(outcome.includes("Connected")) autoBucket = 'Conversation Follow-ups';
+                        if(autoBucket) { document.getElementById('fu-bucket').value = autoBucket; document.getElementById('follow-up-modal').classList.add('active'); }
+                    }
+                    openLead360(state.currentLeadId);
+                }
+                
+                if(res.call.CallAt && res.call.CallAt.startsWith(getISTDateTime().date)) {
+                    const todayCount = parseInt(document.getElementById('q-stat-today').textContent) + 1;
+                    document.getElementById('q-stat-today').textContent = todayCount;
+                }
+                if(document.getElementById('view-dashboard').classList.contains('active')) renderActiveQueue();
+            } else alert(res.error);
+        }
+
+        function renderLeadHistory(leadId) {
+            const calls = state.callsCache[leadId] || [];
+            calls.sort((a,b)=>(b.CallAt||"").localeCompare(a.CallAt||""));
+            document.getElementById('l360-history').innerHTML = calls.length ? calls.map(c => `
+                <div style="border-left: 4px solid ${c.AgentColor||'var(--border)'}; padding-left:16px; background:var(--bg); padding:16px; border-radius:var(--radius-sm); border:1px solid var(--border);">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><strong class="text-sm">${esc(c.Outcome)}</strong><span class="text-xs text-muted font-bold">${c.CallAt ? c.CallAt.replace('T',' ').substring(0,16) : ''}</span></div>
+                    <div class="text-xs font-bold text-muted">By: ${renderAttribution(c.AgentID, c.AgentName, c.AgentColor)}</div>
+                    ${c.Notes ? `<div class="text-sm" style="margin-top:8px; font-style:italic; color:var(--text-secondary);">"${esc(c.Notes)}"</div>` : ''}
+                </div>
+            `).join('') : '<p class="text-sm text-muted">No interactions recorded.</p>';
+        }
+
+        function renderLeadFollowUps(leadId) {
+            const fBox = document.getElementById('l360-followups');
+            const fus = state.followUps.filter(f => f.LeadID === leadId && f.Status === 'PENDING').sort((a,b) => (a.DueDate+a.DueTime).localeCompare(b.DueDate+b.DueTime));
+            fBox.innerHTML = fus.length ? fus.map(f => `
+                <div style="padding:16px; border:1px solid #FFE082; border-left:4px solid var(--warning); border-radius:var(--radius-sm); display:flex; justify-content:space-between; align-items:center; background:var(--bento-amber); flex-wrap:wrap; gap:12px;">
+                    <div><div class="text-sm font-heavy">${esc(f.Bucket)}</div><div class="text-xs font-bold text-muted" style="margin-top:6px;">Due: ${esc(f.DueDate)} ${esc(f.DueTime)} | By: ${renderAttribution(f.AgentID, f.AgentName, f.AgentColor)}</div></div>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn btn-outline" style="padding:8px 12px; font-size:0.75rem;" data-action="open-resched" data-id="${esc(f.FollowUpID)}" data-date="${esc(f.DueDate)}" data-time="${esc(f.DueTime)}" data-note="${esc(f.Note)}">Reschedule</button>
+                        <button class="btn btn-success" style="padding:8px 12px; font-size:0.75rem;" data-action="complete-fu" data-id="${esc(f.FollowUpID)}">Done</button>
+                        <button class="btn btn-outline" style="padding:8px; color:var(--danger);" data-action="delete-fu" data-id="${esc(f.FollowUpID)}"><svg width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                    </div>
+                </div>
+            `).join('') : '<p class="text-sm text-muted">No scheduled tasks.</p>';
+        }
+
+        async function handleScheduleFollowUp(e) {
+            e.preventDefault();
+            const data = { leadId: state.currentLeadId, bucket: document.getElementById('fu-bucket').value, dueDate: document.getElementById('fu-date').value, dueTime: document.getElementById('fu-time').value, note: document.getElementById('fu-note').value };
+            btnLoading('btn-submit-fu', true);
+            const res = await apiCall('createFollowUp', data);
+            btnLoading('btn-submit-fu', false);
+            if(res.success){
+                state.followUps.push(res.followUp); 
+                const idx = state.leads.findIndex(l => l.LeadID === state.currentLeadId);
+                if(idx !== -1) state.leads[idx].NextFollowUpAt = res.nextFollowUpAt;
+                document.getElementById('follow-up-modal').classList.remove('active'); document.getElementById('fu-note').value = '';
+                openLead360(state.currentLeadId); if(document.getElementById('view-dashboard').classList.contains('active')) renderActiveQueue();
+            } else alert(res.error);
+        }
+
+        async function handleReschedule(e) {
+            e.preventDefault();
+            const data = { followUpId: document.getElementById('fu-resched-id').value, dueDate: document.getElementById('fu-resched-date').value, dueTime: document.getElementById('fu-resched-time').value, note: document.getElementById('fu-resched-note').value };
+            btnLoading('btn-submit-resched', true);
+            const res = await apiCall('rescheduleFollowUp', data);
+            btnLoading('btn-submit-resched', false);
+            if(res.success){
+                const fIdx = state.followUps.findIndex(f => f.FollowUpID === res.followUp.FollowUpID);
+                if (fIdx !== -1) state.followUps[fIdx] = res.followUp;
+                const idx = state.leads.findIndex(l => l.LeadID === res.followUp.LeadID);
+                if(idx !== -1) state.leads[idx].NextFollowUpAt = res.nextFollowUpAt;
+                document.getElementById('reschedule-modal').classList.remove('active');
+                openLead360(state.currentLeadId); if(document.getElementById('view-dashboard').classList.contains('active')) renderActiveQueue();
+            } else alert(res.error);
+        }
+
+        async function completeFollowUp(id) {
+            const res = await apiCall('completeFollowUp', { followUpId: id });
+            if(res.success){ 
+                const fIdx = state.followUps.findIndex(f => f.FollowUpID === id);
+                if (fIdx !== -1) {
+                    state.followUps[fIdx].Status = 'COMPLETED';
+                    const idx = state.leads.findIndex(l => l.LeadID === state.followUps[fIdx].LeadID);
+                    if(idx !== -1) state.leads[idx].NextFollowUpAt = res.nextFollowUpAt;
+                }
+                openLead360(state.currentLeadId); if(document.getElementById('view-dashboard').classList.contains('active')) renderActiveQueue();
+            } else alert(res.error);
+        }
+
+        async function deleteFollowUp(id) {
+            if(!confirm("Delete this task?")) return;
+            const res = await apiCall('deleteFollowUp', { followUpId: id });
+            if(res.success){ 
+                const fIdx = state.followUps.findIndex(f => f.FollowUpID === id);
+                if (fIdx !== -1) {
+                    state.followUps[fIdx].Status = 'DELETED';
+                    const idx = state.leads.findIndex(l => l.LeadID === state.followUps[fIdx].LeadID);
+                    if(idx !== -1) state.leads[idx].NextFollowUpAt = res.nextFollowUpAt;
+                }
+                openLead360(state.currentLeadId); if(document.getElementById('view-dashboard').classList.contains('active')) renderActiveQueue();
+            } else alert(res.error);
+        }
+
+        let chartJsLoaded = false;
+        function loadAnalyticsSystem() {
+            if (!chartJsLoaded) {
+                const script = document.createElement('script'); script.onload = () => { chartJsLoaded = true; loadAgentsForFilter(); loadAnalytics(); };
+                script.src = "https://cdn.jsdelivr.net/npm/chart.js"; document.head.appendChild(script);
+            } else { loadAgentsForFilter(); loadAnalytics(); }
+        }
+
+        async function loadAgentsForFilter() {
+            if (state.agents.length === 0) { const res = await apiCall('getAgents', {}); if(res.success) state.agents = res.agents; }
+            const select = document.getElementById('analytics-agent');
+            select.innerHTML = '<option value="ALL">All Agents</option>' + state.agents.map(a => `<option value="${esc(a.UserID)}">${esc(a.Name)}</option>`).join('');
+        }
+
+        async function loadAnalytics() {
+            const dateFilter = document.getElementById('analytics-date').value;
+            const sInput = document.getElementById('analytics-start'); const eInput = document.getElementById('analytics-end');
+            if (dateFilter === 'Custom') { sInput.style.display = 'block'; eInput.style.display = 'block'; } else { sInput.style.display = 'none'; eInput.style.display = 'none'; }
+            if (dateFilter === 'Custom' && (!sInput.value || !eInput.value)) return;
+            
+            btnLoading('btn-refresh-analytics', true);
+            const filters = { dateRange: dateFilter, startDate: sInput.value, endDate: eInput.value, agentId: document.getElementById('analytics-agent').value };
+            const res = await apiCall('getAdminAnalytics', { filters });
+            btnLoading('btn-refresh-analytics', false);
+            
+            if (res.success) {
+                const d = res.data;
+                document.getElementById('analytics-metrics-top').innerHTML = `
+                    <div class="bento-card bento-teal"><p class="text-xs text-muted font-heavy uppercase">Total Calls</p><h2 style="font-size:2.5rem; margin-top:8px;">${d.totalCalls}</h2></div>
+                    <div class="bento-card bento-blue"><p class="text-xs text-muted font-heavy uppercase">Unique Leads</p><h2 style="font-size:2.5rem; margin-top:8px;">${d.uniqueLeadsCalled}</h2></div>
+                    <div class="bento-card bento-green"><p class="text-xs font-heavy uppercase" style="color:var(--success);">Connected</p><h2 style="font-size:2.5rem; margin-top:8px;">${d.outcomes['Connected & Talked'] || 0}</h2></div>
+                    <div class="bento-card bento-red"><p class="text-xs font-heavy uppercase" style="color:var(--danger);">Not Interested</p><h2 style="font-size:2.5rem; margin-top:8px;">${d.outcomes['Not Interested'] || 0}</h2></div>
+                `;
+                renderCharts(d);
+                document.getElementById('analytics-agents-tbody').innerHTML = d.agentActivity.map(a => `<tr><td data-label="Agent" class="font-bold" style="display:flex; align-items:center; gap:12px;"><div style="width:14px; height:14px; border-radius:50%; background:${esc(a.color)}"></div>${esc(a.name)}</td><td data-label="Calls"><span class="font-bold">${a.total}</span></td><td data-label="Connected"><span style="color:var(--success); font-weight:700;">${a.connected}</span></td><td data-label="Unique">${a.unique}</td></tr>`).join('');
+                document.getElementById('analytics-fu-stats').innerHTML = Object.keys(d.followUpStats).map(k => `<div style="display:flex; justify-content:space-between; padding:16px; background:var(--surface); border-radius:var(--radius-sm); border:1px solid var(--border);"><span class="font-bold text-sm" style="color:var(--text-secondary);">${esc(k)}</span><span class="badge badge-primary">${d.followUpStats[k]}</span></div>`).join('');
+            } else alert(res.error);
+        }
+
+        function renderCharts(data) {
+            if(!window.Chart) return;
+            Chart.defaults.font.family = "'Inter', sans-serif"; Chart.defaults.color = '#667774';
+            const colors = { 'Connected & Talked':'#1F8A70', 'No Answer / Didn\'t Receive':'#DDE7E4', 'Busy / No Time':'#C58A28', 'Call Cut':'#D64545', 'Asked to Call Later':'#F4B400', 'Not Interested':'#C94B4B', 'Wrong Number':'#8E24AA', 'Other':'#667774' };
+            const keys = Object.keys(data.outcomes).filter(k => data.outcomes[k]>0);
+            
+            if(state.charts.out) state.charts.out.destroy();
+            state.charts.out = new Chart(document.getElementById('chartOutcomes').getContext('2d'), {
+                type: 'doughnut', data: { labels: keys, datasets: [{ data: keys.map(k=>data.outcomes[k]), backgroundColor: keys.map(k=>colors[k]||'#1B4947'), borderWidth: 0 }] },
+                options: { maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 12, padding: 16 } } }, cutout: '75%' }
+            });
+
+            if(state.charts.prog) state.charts.prog.destroy();
+            state.charts.prog = new Chart(document.getElementById('chartProgress').getContext('2d'), {
+                type: 'bar', data: { labels: data.progressData.labels.length ? data.progressData.labels : ['No Data'], datasets: [{ label: 'Calls', data: data.progressData.data.length ? data.progressData.data : [0], backgroundColor: '#1B4947', borderRadius: 6 }] },
+                options: { maintainAspectRatio: false, plugins:{legend:{display:false}}, scales: { y: { beginAtZero: true, grid: { color: '#F0EEE5' } }, x: { grid: { display: false } } } }
+            });
+        }
+
+        async function loadAgents() {
+            const res = await apiCall('getAgents', {});
+            if (res.success) {
+                state.agents = res.agents;
+                document.getElementById('agents-tbody').innerHTML = res.agents.map(a => `
+                    <tr>
+                        <td data-label="Agent"><div style="display:flex; align-items:center; gap:12px;"><div style="width:16px; height:16px; border-radius:50%; background:${esc(a.Color)}"></div><span class="font-bold">${esc(a.Name)}</span></div></td>
+                        <td data-label="Phone / ID"><div style="font-family:monospace; margin-bottom:4px; font-weight:700;">${esc(a.Phone)}</div><code style="background:var(--primary-soft); color:var(--primary); padding:4px 8px; border-radius:var(--radius-sm); font-size:0.75rem; font-weight:700;">${esc(a.LoginID)}</code></td>
+                        <td data-label="Metrics"><div class="text-sm font-bold text-muted">Calls: <span style="color:var(--text);">${a.CallsToday}</span> | Tasks: <span style="color:var(--text);">${a.FollowUps}</span></div></td>
+                        <td data-label="Status"><span class="badge ${a.Status==='ACTIVE'?'badge-primary':'badge-danger'}">${esc(a.Status)}</span></td>
+                        <td data-label="Security" style="text-align:right;">
+                            <button class="btn btn-outline" style="padding:8px 16px; font-size:0.8rem; border-radius:30px; margin-bottom:8px; width:100%; max-width:140px;" data-action="toggle-agent" data-id="${esc(a.UserID)}" data-status="${a.Status}">${a.Status==='ACTIVE'?'Disable':'Enable'}</button>
+                            <button class="btn btn-outline" style="padding:8px 16px; font-size:0.8rem; border-radius:30px; width:100%; max-width:140px; border-color:var(--danger-soft); color:var(--danger);" data-action="reset-pass" data-id="${esc(a.UserID)}">Reset Pass</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } else alert("Failed to fetch agent list.");
+        }
+
+        async function toggleAgentStatus(id, current) {
+            const res = await apiCall('setAgentStatus', { agentId: id, status: current === 'ACTIVE' ? 'DISABLED' : 'ACTIVE' });
+            if(res.success) loadAgents(); else alert(res.error);
+        }
+        async function resetAgentPass(id) {
+            if(!confirm("Reset password for this agent?")) return;
+            const res = await apiCall('resetAgentPassword', { agentId: id });
+            if(res.success) alert(`Password Reset Successful!\n\nTemp Password: ${res.tempPassword}\n\nShare securely.`); else alert(res.error);
+        }
+    </script>
+</body>
+</html>
